@@ -1,0 +1,30 @@
+version: '2'
+services:
+    app:
+        image: "lf-server-image"
+        container_name: "lf-server"
+        build: .
+        restart: always
+        ports: 
+            - "4000:4000"
+        env_file: 
+            - "./.env"
+        depends_on:
+            - "db"
+            - "redis"
+    db:
+        container_name: "pgdb"
+        restart: always
+        image: "postgres"
+        ports:
+            - "5432:5432"
+        environment: 
+            POSTGRES_USER: lectureforager
+            POSTGRES_PASSWORD: lectureforager
+            POSTGRES_DB: lectureforager
+        volumes: 
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    redis:
+        container_name: queueStore
+        restart: always
+        image: redis
